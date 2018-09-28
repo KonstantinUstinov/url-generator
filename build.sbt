@@ -16,7 +16,7 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-testkit" % akkaV,
     "com.typesafe.akka" %% "akka-slf4j" % akkaV,
     "ch.qos.logback"    % "logback-classic" % "1.2.3",
-    "org.scalaj" 	      %% "scalaj-http" % "2.4.1",
+    "org.scalaj" 	    %% "scalaj-http" % "2.4.1",
     "org.scalatest"     %% "scalatest" % scalaTestV % "test"
   )
 }
