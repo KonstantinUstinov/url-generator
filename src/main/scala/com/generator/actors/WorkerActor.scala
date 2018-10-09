@@ -3,11 +3,9 @@ package com.generator.actors
 import akka.actor.{Actor, ActorLogging}
 import com.generator.generators.{AdSizeGenerator, DomainGenerator, IpGenerator, UserAgentsGenerator}
 import akka.pattern.pipe
-
 import scalaj.http.{Http, HttpResponse}
 import java.net.URLEncoder
 import java.util.concurrent.Executors
-
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -19,15 +17,18 @@ class WorkerActor extends Actor with ActorLogging {
   def receive = {
     case Message =>
 
-      val url = s"http://${DomainGenerator.getRandomDomain}/addyn"
-      val params = s"|3.0|11527.1|${AdSizeGenerator.getRandomAdSize}|0|154|ADTECH;loc=100;target=_blank;misc=[TIMESTAMP];rdclick="
+      val url = s"http://adserver.adtech.advertising.com/addyn"
+      val params = s"|3.0|11527.1|${AdSizeGenerator.getRandomAdSize}|0|154|ADTECH;loc=100;target=_blank;misc=${System.currentTimeMillis()};rdclick="
 
       val ip = IpGenerator.getRandomIp
       val agent = UserAgentsGenerator.getRandomAgent
-      log.debug(s"url=${url + URLEncoder.encode(params, "utf-8")} X-Forwarded-For : $ip User-Agent : $agent")
+      val referer = "https://" +DomainGenerator.getRandomDomain
+      log.debug(s"url=${url + params} X-Forwarded-For : $ip User-Agent : $agent Referer : $referer")
 
-      val headers = Map("User-Agent" -> agent, "X-Forwarded-For" -> ip)
-      val request = Http(url + URLEncoder.encode(params, "utf-8")).headers(headers)
+      val headers = Map("User-Agent" -> agent, "X-Forwarded-For" -> ip, "Referer" -> referer)
+      val request = Http(url + params).method("GET").headers(headers)
+
+      //URLEncoder.encode(params, "utf-8")
 
       Future{request.asString}.pipeTo(self)
 
