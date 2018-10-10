@@ -5,9 +5,8 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{ActorSystem, Props}
 import akka.event.Logging
 import com.generator.actors.{Message, SchedulerActor}
-import com.generator.generators.{DomainGenerator, IpGenerator, UserAgentsGenerator}
+import com.generator.generators.{DomainGenerator, IpGenerator, UserAgentsGenerator, ipListGenerator}
 import com.generator.utils.ConfigProvider
-import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.duration._
 
@@ -22,6 +21,7 @@ object  Boot extends App with ConfigProvider{
 
   DomainGenerator.fillGenerator()
   IpGenerator.fillGenerator()
+  ipListGenerator.fillGenerator()
   UserAgentsGenerator.fillGenerator()
 
   system.scheduler.schedule(1 seconds, FiniteDuration(config.getDuration("scheduler.interval").toNanos, TimeUnit.NANOSECONDS), actor, Message())
